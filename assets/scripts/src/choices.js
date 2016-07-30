@@ -451,6 +451,35 @@ export class Choices {
         }
         return this;
     }
+    
+    /**
+     * Direct populate choices
+     * @param  {Array} choices - Choices to insert 
+     * @param  {string} value - Name of 'value' property
+     * @param  {string} label - Name of 'label' property
+     * @return {Object} Class instance
+     * @public
+     */
+    setChoices(choices, value, label){
+        if(this.initialised === true) {
+            if(this.passedElement.type === 'select-one' || this.passedElement.type === 'select-multiple') {
+                if(!isType('Array', choices) || !value) return;
+
+                if(choices && choices.length) {
+                    this.containerOuter.classList.remove(this.config.classNames.loadingState);
+                    choices.forEach((result, index) => {
+                        // Select first choice in list if single select input
+                        if(index === 0 && this.passedElement.type === 'select-one') { 
+                            this._addChoice(true, false, result[value], result[label]);
+                        } else {
+                            this._addChoice(false, false, result[value], result[label]);    
+                        }
+                    });
+                }
+            }
+        }
+        return this;
+    }
 
     /** 
      * Set value of input to blank
