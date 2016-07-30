@@ -71,6 +71,7 @@ export class Choices {
             callbackOnAddItem: (id, value, passedInput) => {},
             callbackOnRemoveItem: (id, value, passedInput) => {},
             callbackOnRender: (state) => {},
+            callbackOnChange: (id, value, passedInput) => {},
         };
 
         // Merge options with user options
@@ -542,6 +543,24 @@ export class Choices {
         }
         return this;
     }
+    
+    /** 
+     * Call change callback
+     * @param  {string} value - last added/deleted/selected value
+     * @return
+     * @private
+     */
+    _triggerChange(value) {
+        // Run callback if it is a function
+        if(this.config.callbackOnChange){
+            const callback = this.config.callbackOnChange;
+            if(isType('Function', callback)) {
+                callback(value, this.passedElement);
+            } else {
+                console.error('callbackOnChange: Callback is not a function');
+            }
+        }
+    }
 
     /** 
      * Process enter key event
@@ -581,6 +600,7 @@ export class Choices {
                 this.toggleDropdown();
                 this._addItem(value);
                 this.clearInput(this.passedElement);
+                this._triggerChange(value);
             }
         }
     };
@@ -601,6 +621,7 @@ export class Choices {
             if(this.config.editItems && !hasHighlightedItems && lastItem) {
                 this.input.value = lastItem.value;
                 this._removeItem(lastItem);
+                this._triggerChange(lastItem.value)
             } else {
                 if(!hasHighlightedItems) { this.highlightItem(lastItem); }
                 this.removeHighlightedItems();    
@@ -674,6 +695,8 @@ export class Choices {
                             this.store.dispatch(activateChoices());
                             this.toggleDropdown();
                         }
+                        
+                        this._triggerChange(value);
                     }
                 }
 
@@ -844,6 +867,7 @@ export class Choices {
                 if(e.target.hasAttribute('data-clear-one')) {
                     const itemToRemove = activeItems[0];
                     this._removeItem(itemToRemove);
+                    this._triggerChange(itemToRemove.value);
                     e.target.style.display = 'none';
                     return;
                 }
@@ -863,6 +887,7 @@ export class Choices {
                         const itemId       = e.target.parentNode.getAttribute('data-id');
                         const itemToRemove = activeItems.find((item) => item.id === parseInt(itemId));
                         this._removeItem(itemToRemove);
+                        this._triggerChange(itemToRemove.value);
                     }
                 } else if(e.target.hasAttribute('data-item')) {
                     // If we are clicking on an item
@@ -894,6 +919,8 @@ export class Choices {
                             this.store.dispatch(activateChoices(true));
                             this.toggleDropdown();
                         }
+                        
+                        this._triggerChange(choice.value);
                     }
                 }
 
