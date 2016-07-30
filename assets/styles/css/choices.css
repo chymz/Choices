@@ -173,6 +173,13 @@
   line-height: 1;
   cursor: pointer; }
 
+.choices__clear_one {
+  background-image: url("../../icons/cross-black.svg");
+  margin: 0;
+  border: 0;
+  float: right;
+  margin-top: 6px; }
+
 .choices__input {
   background-color: #f9f9f9;
   font-size: 1.4rem;
