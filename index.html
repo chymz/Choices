@@ -234,34 +234,13 @@
                 removeButton: true
             });
 
-            const choices15 = new Choices('#choices-15', {
-                choices: [
-                    {value: 'One', label: 'Label One', selected: true, disabled: false},
-                    {value: 'Two', label: 'Label Two', disabled: true},
-                    {value: 'Three', label: 'Label Three'},
-                ],
-            });
+            const choices15 = new Choices('#choices-15');
             
-            const choicesr1 = new Choices('#choices-r1');
-            const choicesrm = new Choices('#choices-rm');
-            
-            const values = [
-              {value: 'one', label: 'Label one'},
-              {value: 'two', label: 'Label two'},
-              {value: 'three', label: 'Label three'},
-            ];
-            
-            choicesr1.ajax(cb => {
-              cb(values, 'value', 'label');
-              choicesr1.setSelectValue('two');
-              console.log(choicesr1.getSelectValue());
-            });
-            
-            choicesrm.ajax(cb => {
-              cb(values, 'value', 'label');
-              choicesrm.setSelectValue(['two', 'three', 'two'])
-              console.log(choicesrm.getSelectValue());
-            });
+            choices15.setChoices([
+                {value: 'One', label: 'Label One'},
+                {value: 'Two', label: 'Label Two'},
+                {value: 'Three', label: 'Label Three'},
+            ], 'value', 'label');
 
         });
     </script>
