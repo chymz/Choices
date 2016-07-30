@@ -14,6 +14,7 @@
             <h1>Choices</h1>
             <p>A lightweight, configurable select box/text input plugin. Similar to Select2 and Selectize but without the jQuery dependency.</p>
             <p>For all config options, visit the <a href="https://github.com/jshjohnson/Choices">GitHub repo</a>.</p>
+
             <h2>Text inputs</h2>
             <label for="choices-1">Limited to 5</label>
             <input id="choices-1" type="text" value="preset-1,preset-2" placeholder="Enter something">
@@ -142,6 +143,10 @@
             <select name="choices-15" id="choices-15" placeholder="This is a placeholder">
                 <option value="0">Zero</option>
             </select>
+            
+            <h2>set/getSelectValue()</h2>
+            <select name="choices-r1" id="choices-r1" placeholder="Placeholder text (one)"></select>
+            <select name="choices-rm" id="choices-rm" placeholder="Placeholder text (multiple)" multiple></select>
         </div>
     </div>
     <script>
@@ -235,6 +240,27 @@
                     {value: 'Two', label: 'Label Two', disabled: true},
                     {value: 'Three', label: 'Label Three'},
                 ],
+            });
+            
+            const choicesr1 = new Choices('#choices-r1');
+            const choicesrm = new Choices('#choices-rm');
+            
+            const values = [
+              {value: 'one', label: 'Label one'},
+              {value: 'two', label: 'Label two'},
+              {value: 'three', label: 'Label three'},
+            ];
+            
+            choicesr1.ajax(cb => {
+              cb(values, 'value', 'label');
+              choicesr1.setSelectValue('two');
+              console.log(choicesr1.getSelectValue());
+            });
+            
+            choicesrm.ajax(cb => {
+              cb(values, 'value', 'label');
+              choicesrm.setSelectValue(['two', 'three', 'two'])
+              console.log(choicesrm.getSelectValue());
             });
 
         });
