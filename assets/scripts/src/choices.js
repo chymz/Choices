@@ -392,6 +392,56 @@ export class Choices {
 
         return this;
     }
+    
+    /**
+     * Set selected choices by 'value' property (for selects elements only)
+     * @param {mixed} value - Single value or array of values
+     * @return {Object} Class instance
+     * @public
+     */
+    setSelectValue(value){
+        if (this.passedElement.type !== 'text') {
+            const choices = this.store.getState().choices;
+            
+            if (!isType('Array', value)) {
+                value = [value];
+            }
+            
+            value.forEach((val, index) => {
+                choices.forEach((choice) => {
+                    // Check 'value' property
+                    if(choice.value === val && !choice.selected) {
+                        this._addItem(choice.value, choice.label, choice.id);
+                    }
+                })
+            })
+        }
+        return this;
+    }
+    
+    /**
+     * Get selected choices (for selects elements only) and return 'value' property (single value or array)
+     * @return {mixed} selected value or array of values
+     * @public
+     */
+    getSelectValue(){
+        if(this.passedElement.type !== 'text'){
+            const choices = this.store.getState().choices;
+            let values = [];
+            
+            choices.forEach((choice) => {
+                if(choice.selected) {
+                    values.push(choice.value);
+                }
+            })
+            
+            if (this.passedElement.type == 'select-one') {
+                return values[0];
+            } else {
+                return values;
+            }
+        }
+    }
 
     /**
      * Clear value of inputs
