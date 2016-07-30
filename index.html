@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Choices</title>
-    <link rel="stylesheet" href="assets/styles/css/base.min.css">
-    <link rel="stylesheet" href="assets/styles/css/choices.min.css">
+    <link rel="stylesheet" href="assets/styles/css/base.css">
+    <link rel="stylesheet" href="assets/styles/css/choices.css">
     <script src="assets/scripts/dist/choices.min.js"></script>
 </head>
 <body>
@@ -234,13 +234,14 @@
                 removeButton: true
             });
 
-            const choices15 = new Choices('#choices-15');
-            
-            choices15.setChoices([
-                {value: 'One', label: 'Label One'},
-                {value: 'Two', label: 'Label Two'},
-                {value: 'Three', label: 'Label Three'},
-            ], 'value', 'label');
+            const choices15 = new Choices('#choices-15', {
+                removeItemButton: true,
+                choices: [
+                    {value: 'One', label: 'Label One', selected: true, disabled: false},
+                    {value: 'Two', label: 'Label Two', disabled: true},
+                    {value: 'Three', label: 'Label Three'},
+                ],
+            });
 
         });
     </script>

@@ -841,6 +841,13 @@ export class Choices {
                 e.preventDefault();
 
                 const hasShiftKey = e.shiftKey ? true : false;
+                
+                if(e.target.hasAttribute('data-clear-one')) {
+                    const itemToRemove = activeItems[0];
+                    this._removeItem(itemToRemove);
+                    e.target.style.display = 'none';
+                    return;
+                }
 
                 if(this.passedElement.type !== 'text' && !this.dropdown.classList.contains(this.config.classNames.activeState)) {
                     // For select inputs we always want to show the dropdown if it isn't already showing
@@ -851,7 +858,7 @@ export class Choices {
                 if(this.input !== document.activeElement) {
                     this.input.focus();
                 }
-
+                
                 if(e.target.hasAttribute('data-button')) {
                     if(this.config.removeItems && this.config.removeItemButton) {
                         const itemId       = e.target.parentNode.getAttribute('data-id');
@@ -1112,6 +1119,12 @@ export class Choices {
         if(this.passedElement.type === 'select-one') {
             this.removeActiveItems(id);
         }  
+        
+        // Display clear button on select-one element
+        if (this.config.removeItemButton && this.passedElement.type === 'select-one') {
+            const clearButton = this.containerInner.querySelector('[data-clear-one]');
+            clearButton.style.display = 'inline-block';
+        }
 
         // Run callback if it is a function
         if(this.config.callbackOnAddItem){
@@ -1221,7 +1234,11 @@ export class Choices {
                 return strToEl(`<div class="${ classNames.containerOuter }" data-type="${ this.passedElement.type }"></div>`);
             },
             containerInner: () => {
-                return strToEl(`<div class="${ classNames.containerInner }"></div>`);
+                if(this.config.removeItemButton && this.passedElement.type === 'select-one') {
+                    return strToEl(`<div class="${ classNames.containerInner }"><button class="${ classNames.button } choices__clear_one" data-clear-one>Remove current selection</button></div>`);
+                }else{
+                    return strToEl(`<div class="${ classNames.containerInner }"></div>`);
+                }
             },
             itemList: () => {
                 return strToEl(`<div class="${ classNames.list } ${ this.passedElement.type === 'select-one' ? classNames.listSingle : classNames.listItems }"></div>`);
