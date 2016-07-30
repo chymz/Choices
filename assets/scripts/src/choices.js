@@ -516,7 +516,6 @@ export class Choices {
                 if(!isType('Array', choices) || !value) return;
 
                 if(choices && choices.length) {
-                    this.containerOuter.classList.remove(this.config.classNames.loadingState);
                     choices.forEach((result, index) => {
                         // Select first choice in list if single select input
                         if(index === 0 && this.passedElement.type === 'select-one') { 
