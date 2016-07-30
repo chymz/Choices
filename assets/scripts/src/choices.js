@@ -26,6 +26,7 @@ export class Choices {
 
         const defaultConfig = {
             items: [],
+            choices: [],
             maxItemCount: -1,
             addItems: true,
             removeItems: true,
@@ -90,8 +91,12 @@ export class Choices {
         this.highlightPosition = 0;
         this.canSearch = this.config.search;
 
+        // Assing preset choices from passed object
+        this.presetChoices = this.config.choices;
+
         // Assign preset items from passed object first
         this.presetItems = this.config.items;
+
         // Then add any values passed from attribute
         if(this.passedElement.value) {
             this.presetItems = this.presetItems.concat(this.passedElement.value.split(this.config.delimiter));
@@ -1261,10 +1266,23 @@ export class Choices {
                 });
             } else {
                 const passedOptions = Array.from(this.passedElement.options);
-                passedOptions.forEach((option) => {
-                    const isDisabled = option.disabled || option.parentNode.disabled;
-                    this._addChoice(option.selected, isDisabled, option.value, option.innerHTML);
+                let allChoices = [];
+
+                // Create array of options from option elements
+                passedOptions.forEach((o) => {
+                    allChoices.push({
+                        value: o.value,
+                        label: o.innerHTML,
+                        selected: o.selected,
+                        disabled: o.disabled || o.parentNode.disabled
+                    });
                 });
+
+                allChoices
+                    .concat(this.presetChoices)
+                    .forEach((o) => {
+                        this._addChoice(o.selected ? o.selected : false, o.disabled ? o.disabled : false, o.value, o.label);
+                    });
             }
         } else if(this.passedElement.type === 'text') {
             // Add any preset values seperated by delimiter
@@ -1290,24 +1308,25 @@ export class Choices {
     renderGroups(groups, choices, fragment) {
         const groupFragment = fragment || document.createDocumentFragment();
 
-        groups.forEach((group, i) => {
-            // Grab options that are children of this group
-            const groupChoices = choices.filter((choice) => {
-                if(this.passedElement.type === 'select-one') {
-                    return choice.groupId === group.id    
-                } else {
-                    return choice.groupId === group.id && !choice.selected;
+        groups
+            .forEach((group, i) => {
+                // Grab options that are children of this group
+                const groupChoices = choices.filter((choice) => {
+                    if(this.passedElement.type === 'select-one') {
+                        return choice.groupId === group.id    
+                    } else {
+                        return choice.groupId === group.id && !choice.selected;
+                    }
+                });
+
+                if(groupChoices.length >= 1) {
+                    const dropdownGroup = this._getTemplate('choiceGroup', group);
+
+                    groupFragment.appendChild(dropdownGroup);
+
+                    this.renderChoices(groupChoices, groupFragment);
                 }
             });
-
-            if(groupChoices.length >= 1) {
-                const dropdownGroup = this._getTemplate('choiceGroup', group);
-
-                groupFragment.appendChild(dropdownGroup);
-
-                this.renderChoices(groupChoices, groupFragment);
-            }
-        });
 
         return groupFragment;
     }
@@ -1323,15 +1342,16 @@ export class Choices {
         // Create a fragment to store our list items (so we don't have to update the DOM for each item)
         const choicesFragment = fragment || document.createDocumentFragment();
 
-        choices.forEach((choice, i) => {
-            const dropdownItem = this._getTemplate('choice', choice);
+        choices
+            .forEach((choice, i) => {
+                const dropdownItem = this._getTemplate('choice', choice);
 
-            if(this.passedElement.type === 'select-one') {
-                choicesFragment.appendChild(dropdownItem);    
-            } else if(!choice.selected) {
-                choicesFragment.appendChild(dropdownItem);   
-            }
-        });
+                if(this.passedElement.type === 'select-one') {
+                    choicesFragment.appendChild(dropdownItem);    
+                } else if(!choice.selected) {
+                    choicesFragment.appendChild(dropdownItem);   
+                }
+            });
 
         return choicesFragment;
     }

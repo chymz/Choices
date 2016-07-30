@@ -13,6 +13,7 @@
         <div class="section">
             <h1>Choices</h1>
             <p>A lightweight, configurable select box/text input plugin. Similar to Select2 and Selectize but without the jQuery dependency.</p>
+            <p>For all config options, visit the <a href="https://github.com/jshjohnson/Choices">GitHub repo</a>.</p>
             <h2>Text inputs</h2>
             <label for="choices-1">Limited to 5</label>
             <input id="choices-1" type="text" value="preset-1,preset-2" placeholder="Enter something">
@@ -136,6 +137,11 @@
 
             <label for="choices-14">Countries remote source</label>
             <select name="choices-14" id="choices-14" placeholder="Pick a country"></select>
+
+            <label for="choices-15">Options added via config</label>
+            <select name="choices-15" id="choices-15" placeholder="This is a placeholder">
+                <option value="0">Zero</option>
+            </select>
         </div>
     </div>
     <script>
@@ -178,7 +184,7 @@
             const choices10 = new Choices('#choices-10', { 
                 placeholder: true, 
                 placeholderValue: 'Pick an Strokes record',
-                callbackOnRender: (state) => console.log(state)
+                // callbackOnRender: (state) => console.log(state)
             }).ajax((callback) => {
                 fetch('https://api.discogs.com/artists/55980/releases?token=QBRmstCkwXEvCjTclCpumbtNwvVkEzGAdELXyRyW')
                     .then((response) => {
@@ -222,6 +228,15 @@
                 placeholderValue: 'This is a placeholder set in the config',
                 removeButton: true
             });
+
+            const choices15 = new Choices('#choices-15', {
+                choices: [
+                    {value: 'One', label: 'Label One', selected: true, disabled: false},
+                    {value: 'Two', label: 'Label Two', disabled: true},
+                    {value: 'Three', label: 'Label Three'},
+                ],
+            });
+
         });
     </script>
 </body>
