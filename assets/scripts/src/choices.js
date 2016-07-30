@@ -513,7 +513,7 @@ export class Choices {
     setChoices(choices, value, label){
         if(this.initialised === true) {
             if(this.passedElement.type === 'select-one' || this.passedElement.type === 'select-multiple') {
-                if(!isType('Array', choices) || !value) return;
+                if(!isType('Array', choices) || !value) return this;
 
                 if(choices && choices.length) {
                     choices.forEach((result, index) => {
