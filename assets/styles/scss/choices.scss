@@ -40,6 +40,13 @@ $choices-button-icon-black-path: '../../icons/cross-black.svg';
         background-color: #FFFFFF;
         margin: 0;
     }
+    [data-fake-focus] {
+        width: 0;
+        height: 0;
+        border: 0;
+        background: transparent;
+        outline: none;
+    }
     &.is-open:after { 
         border-color: transparent transparent $choices-text-color transparent; 
         margin-top: -7.5px;

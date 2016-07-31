@@ -988,6 +988,18 @@ export class Choices {
             }
         }
     }
+    
+    /**
+     * Focus event on fake button (select-one only)
+     * @param  {Object} e Event
+     * @return
+     * @private
+     */
+    _onFocusFakeButton(e){
+        this.input.dispatchEvent(new Event('focus'));
+        this.input.focus();
+        this.input.select();
+    }
 
     /**
      * Blur event
@@ -1260,10 +1272,14 @@ export class Choices {
                 return strToEl(`<div class="${ classNames.containerOuter }" data-type="${ this.passedElement.type }"></div>`);
             },
             containerInner: () => {
+                var fakeButton = '';
+                if(this.passedElement.type === 'select-one') {
+                    fakeButton = `<button data-fake-focus></button>`;
+                }
                 if(this.config.removeItemButton && this.passedElement.type === 'select-one') {
-                    return strToEl(`<div class="${ classNames.containerInner }"><button class="${ classNames.button } choices__clear_one" data-clear-one>Remove current selection</button></div>`);
+                    return strToEl(`<div class="${ classNames.containerInner }">${ fakeButton }<button class="${ classNames.button } choices__clear_one" data-clear-one>Remove current selection</button></div>`);
                 }else{
-                    return strToEl(`<div class="${ classNames.containerInner }"></div>`);
+                    return strToEl(`<div class="${ classNames.containerInner }">${ fakeButton }</div>`);
                 }
             },
             itemList: () => {
@@ -1606,6 +1622,11 @@ export class Choices {
         document.addEventListener('keydown', this._onKeyDown);
         document.addEventListener('mousedown', this._onMouseDown);
         document.addEventListener('mouseover', this._onMouseOver);
+        
+        if(this.passedElement.type === 'select-one'){
+            const fakeButton = this.containerInner.querySelector('[data-fake-focus]');
+            fakeButton.addEventListener('focus', this._onFocusFakeButton.bind(this));
+        }
 
         this.input.addEventListener('input', this._onInput);
         this.input.addEventListener('paste', this._onPaste);
@@ -1623,6 +1644,11 @@ export class Choices {
         document.removeEventListener('keydown', this._onKeyDown);
         document.removeEventListener('mousedown', this._onMouseDown);
         document.removeEventListener('mouseover', this._onMouseOver);
+        
+        if(this.passedElement.type === 'select-one'){
+            const fakeButton = this.containerInner.querySelector('[data-fake-focus]');
+            fakeButton.removeEventListener('focus', this._onFocusFakeButton);
+        }
         
         this.input.removeEventListener('input', this._onInput);
         this.input.removeEventListener('paste', this._onPaste);
