@@ -471,6 +471,13 @@ export class Choices {
      * @public
      */
     clearValue() {
+        
+        // Hide clear button on select-one elements
+        if (this.passedElement.type === 'select-one' && this.config.removeItemButton) {
+            const removeButton = this.containerInner.querySelector('[data-clear-one]');
+            removeButton.style.display = 'none';
+        }
+        
         this.store.dispatch(clearAll());
         return this;
     }
@@ -1178,6 +1185,12 @@ export class Choices {
         if(!item || !isType('Object', item)) {
             console.error('removeItem: No item object was passed to be removed');
             return;
+        }
+        
+        // Hide clear button on select-one elements
+        if (this.passedElement.type === 'select-one' && this.config.removeItemButton) {
+            const removeButton = this.containerInner.querySelector('[data-clear-one]');
+            removeButton.style.display = 'none';
         }
 
         const id       = item.id;
