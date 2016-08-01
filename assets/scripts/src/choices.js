@@ -464,56 +464,6 @@ export class Choices {
         }
         return this;
     }
-    
-    /**
-     * Set selected choices by 'value' property (for selects elements only)
-     * @param {mixed} value - Single value or array of values
-     * @return {Object} Class instance
-     * @public
-     */
-    setSelectValue(value){
-        if (this.passedElement.type !== 'text') {
-            const choices = this.store.getState().choices;
-            
-            if (!isType('Array', value)) {
-                value = [value];
-            }
-            
-            value.forEach((val, index) => {
-                choices.forEach((choice) => {
-                    // Check 'value' property
-                    if(choice.value === val && !choice.selected) {
-                        this._addItem(choice.value, choice.label, choice.id);
-                    }
-                })
-            })
-        }
-        return this;
-    }
-    
-    /**
-     * Get selected choices (for selects elements only) and return 'value' property (single value or array)
-     * @return {mixed} selected value or array of values
-     * @public
-     */
-    getSelectValue(){
-        if(this.passedElement.type !== 'text'){
-            const choices = this.store.getState().choices;
-            let values = [];
-            
-            choices.forEach((choice) => {
-                if(choice.selected) {
-                    values.push(choice.value);
-                }
-            })
-            
-            if (this.passedElement.type == 'select-one') {
-                return values[0];
-            } else {
-                return values;
-            }
-        }
-    }
 
     /**
      * Clear value of inputs
@@ -521,13 +471,6 @@ export class Choices {
      * @public
      */
     clearValue() {
-        
-        // Hide clear button on select-one elements
-        if (this.passedElement.type === 'select-one' && this.config.removeItemButton) {
-            const removeButton = this.containerInner.querySelector('[data-clear-one]');
-            removeButton.style.display = 'none';
-        }
-        
         this.store.dispatch(clearAll());
         return this;
     }
@@ -580,34 +523,6 @@ export class Choices {
         }
         return this;
     }
-    
-    /**
-     * Direct populate choices
-     * @param  {Array} choices - Choices to insert 
-     * @param  {string} value - Name of 'value' property
-     * @param  {string} label - Name of 'label' property
-     * @return {Object} Class instance
-     * @public
-     */
-    setChoices(choices, value, label){
-        if(this.initialised === true) {
-            if(this.passedElement.type === 'select-one' || this.passedElement.type === 'select-multiple') {
-                if(!isType('Array', choices) || !value) return this;
-
-                if(choices && choices.length) {
-                    choices.forEach((result, index) => {
-                        // Select first choice in list if single select input
-                        if(index === 0 && this.passedElement.type === 'select-one') { 
-                            this._addChoice(true, false, result[value], result[label]);
-                        } else {
-                            this._addChoice(false, false, result[value], result[label]);    
-                        }
-                    });
-                }
-            }
-        }
-        return this;
-    }
 
     /** 
      * Set value of input to blank
@@ -620,24 +535,6 @@ export class Choices {
             this.input.style.width = getWidthOfInput(this.input);
         }
         return this;
-    }
-    
-    /** 
-     * Call change callback
-     * @param  {string} value - last added/deleted/selected value
-     * @return
-     * @private
-     */
-    _triggerChange(value) {
-        // Run callback if it is a function
-        if(this.config.callbackOnChange){
-            const callback = this.config.callbackOnChange;
-            if(isType('Function', callback)) {
-                callback(value, this.passedElement);
-            } else {
-                console.error('callbackOnChange: Callback is not a function');
-            }
-        }
     }
 
     /** 
@@ -698,7 +595,6 @@ export class Choices {
                 this._addItem(value);
                 this._triggerChange(value);
                 this.clearInput(this.passedElement);
-                this._triggerChange(value);
             }
         }
     };
@@ -794,8 +690,6 @@ export class Choices {
                             this.store.dispatch(activateChoices());
                             this.toggleDropdown();
                         }
-                        
-                        this._triggerChange(value);
                     }
                 }
 
@@ -962,14 +856,6 @@ export class Choices {
                 e.preventDefault();
 
                 const hasShiftKey = e.shiftKey ? true : false;
-                
-                if(e.target.hasAttribute('data-clear-one')) {
-                    const itemToRemove = activeItems[0];
-                    this._removeItem(itemToRemove);
-                    this._triggerChange(itemToRemove.value);
-                    e.target.style.display = 'none';
-                    return;
-                }
 
                 if(this.passedElement.type !== 'text' && !this.dropdown.classList.contains(this.config.classNames.activeState)) {
                     // For select inputs we always want to show the dropdown if it isn't already showing
@@ -980,7 +866,7 @@ export class Choices {
                 if(this.input !== document.activeElement) {
                     this.input.focus();
                 }
-                
+
                 if(e.target.hasAttribute('data-button')) {
                     if(this.config.removeItems && this.config.removeItemButton) {
                         const itemId       = e.target.parentNode.getAttribute('data-id');
@@ -1019,8 +905,6 @@ export class Choices {
                             this.store.dispatch(activateChoices(true));
                             this.toggleDropdown();
                         }
-                        
-                        this._triggerChange(choice.value);
                     }
                 }
 
@@ -1093,18 +977,6 @@ export class Choices {
                 this.input.focus();
             }
         }
-    }
-    
-    /**
-     * Focus event on fake button (select-one only)
-     * @param  {Object} e Event
-     * @return
-     * @private
-     */
-    _onFocusFakeButton(e){
-        this.input.dispatchEvent(new Event('focus'));
-        this.input.focus();
-        this.input.select();
     }
 
     /**
@@ -1269,12 +1141,6 @@ export class Choices {
         if(this.passedElement.type === 'select-one') {
             this.removeActiveItems(id);
         }  
-        
-        // Display clear button on select-one element
-        if (this.config.removeItemButton && this.passedElement.type === 'select-one') {
-            const clearButton = this.containerInner.querySelector('[data-clear-one]');
-            clearButton.style.display = 'inline-block';
-        }
 
         // Run callback if it is a function
         if(this.config.callbackOnAddItem){
@@ -1299,12 +1165,6 @@ export class Choices {
         if(!item || !isType('Object', item)) {
             console.error('removeItem: No item object was passed to be removed');
             return;
-        }
-        
-        // Hide clear button on select-one elements
-        if (this.passedElement.type === 'select-one' && this.config.removeItemButton) {
-            const removeButton = this.containerInner.querySelector('[data-clear-one]');
-            removeButton.style.display = 'none';
         }
 
         const id       = item.id;
@@ -1398,15 +1258,7 @@ export class Choices {
                 }
             },
             containerInner: () => {
-                var fakeButton = '';
-                if(this.passedElement.type === 'select-one') {
-                    fakeButton = `<button data-fake-focus></button>`;
-                }
-                if(this.config.removeItemButton && this.passedElement.type === 'select-one') {
-                    return strToEl(`<div class="${ classNames.containerInner }">${ fakeButton }<button class="${ classNames.button } choices__clear_one" data-clear-one>Remove current selection</button></div>`);
-                }else{
-                    return strToEl(`<div class="${ classNames.containerInner }">${ fakeButton }</div>`);
-                }
+                return strToEl(`<div class="${ classNames.containerInner }"></div>`);
             },
             itemList: () => {
                 return strToEl(`<div class="${ classNames.list } ${ this.passedElement.type === 'select-one' ? classNames.listSingle : classNames.listItems }"></div>`);
@@ -1745,11 +1597,6 @@ export class Choices {
         document.addEventListener('keydown', this._onKeyDown);
         document.addEventListener('mousedown', this._onMouseDown);
         document.addEventListener('mouseover', this._onMouseOver);
-        
-        if(this.passedElement.type === 'select-one'){
-            const fakeButton = this.containerInner.querySelector('[data-fake-focus]');
-            fakeButton.addEventListener('focus', this._onFocusFakeButton.bind(this));
-        }
 
         if(this.passedElement.type && this.passedElement.type === 'select-one') {
             this.containerOuter.addEventListener('focus', this._onFocus);
@@ -1774,11 +1621,6 @@ export class Choices {
 
         if(this.passedElement.type && this.passedElement.type === 'select-one') {
             this.containerOuter.removeEventListener('focus', this._onFocus);
-        }
-        
-        if(this.passedElement.type === 'select-one'){
-            const fakeButton = this.containerInner.querySelector('[data-fake-focus]');
-            fakeButton.removeEventListener('focus', this._onFocusFakeButton);
         }
         
         this.input.removeEventListener('input', this._onInput);

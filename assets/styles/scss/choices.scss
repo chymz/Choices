@@ -11,7 +11,6 @@ $choices-keyline-color: #DDDDDD;
 $choices-primary-color: #00BCD4;
 $choices-disabled-color: #eaeaea;
 $choices-button-icon-path: '../../icons/cross.svg';
-$choices-button-icon-black-path: '../../icons/cross-black.svg';
 
 .choices {
     position: relative;
@@ -39,13 +38,6 @@ $choices-button-icon-black-path: '../../icons/cross-black.svg';
         border-bottom: 1px solid $choices-keyline-color;
         background-color: #FFFFFF;
         margin: 0;
-    }
-    [data-fake-focus] {
-        width: 0;
-        height: 0;
-        border: 0;
-        background: transparent;
-        outline: none;
     }
     &.is-open:after { 
         border-color: transparent transparent $choices-text-color transparent; 
@@ -200,14 +192,6 @@ $choices-button-icon-black-path: '../../icons/cross-black.svg';
     padding-right: 6px;
     line-height: 1;
     cursor: pointer;
-}
-
-.choices__clear_one {
-    background-image: url($choices-button-icon-black-path);
-    margin: 0;
-    border: 0;
-    float: right;
-    margin-top: 6px;
 }
 
 .choices__input {
