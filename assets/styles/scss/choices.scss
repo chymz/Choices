@@ -62,6 +62,7 @@ $choices-button-icon-black-path: '../../icons/cross-black.svg';
         right: .75rem + .4rem;
         top: 50%;
         margin-top: -2.5px;  
+        pointer-events: none;
     } 
 }
 
@@ -143,6 +144,7 @@ $choices-button-icon-black-path: '../../icons/cross-black.svg';
         position: relative;
         max-height: 300px;
         overflow: auto;
+        -webkit-overflow-scrolling: touch;
         will-change: scroll-position;
     }
     .choices__item {
